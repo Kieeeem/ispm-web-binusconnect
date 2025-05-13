@@ -1,7 +1,8 @@
 // resources/js/Pages/BinusConnect.jsx
 import React from 'react';
 
-const BinusConnect = () => {
+
+const binusConnect = () => {
     return (
         <div className="container">
             <header className="header">
@@ -39,4 +40,4 @@ const BinusConnect = () => {
     );
 };
 
-export default BinusConnect;
+export default binusConnect;
