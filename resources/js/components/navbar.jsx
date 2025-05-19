@@ -1,7 +1,7 @@
 
 
 const Navbar = () => {
-return(<nav className="bg-[#FAFAFA] text-[#292929] px-6 py-4 flex items-center justify-between">
+return(<nav className="bg-[#FAFAFA] text-[#292929] px-40 py-4 flex items-center justify-between">
       {/* Left section: Logo and Search */}
       <div className="flex items-center space-x-6">
         {/* Logo */}
@@ -20,8 +20,8 @@ return(<nav className="bg-[#FAFAFA] text-[#292929] px-6 py-4 flex items-center j
       </div>
 
       {/* Center: Navigation Menu */}
-      <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-6">
-        {["Event", "Organization", "Forum", "Marketplace"].map((item) => (
+      <div className="absolute left-1/2 transform -translate-x-[90%] flex space-x-18">
+        {["Dashboard","Event", "Organization", "Forum", "Marketplace"].map((item) => (
           <button
             key={item}
             onClick={() => {
@@ -29,7 +29,7 @@ return(<nav className="bg-[#FAFAFA] text-[#292929] px-6 py-4 flex items-center j
                 setPage(item.toLowerCase());
               }
             }}
-            className="text-lg relative transition-all duration-300 ease-in-out hover:text-[#0099DC] hover:scale-105 active:scale-95"
+            className="text-[400] text-[#292929] text-[20px] relative transition-all duration-300 ease-in-out hover:text-[#0099DC] hover:scale-105 active:scale-95"
           >
             {item}
             <span className="block h-0.5 bg-[#0099DC] scale-x-0 hover:scale-x-100 transition-transform origin-left"></span>

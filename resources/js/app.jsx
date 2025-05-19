@@ -14,7 +14,7 @@ const App = () => {
     <div className="min-h-screen bg-[#ececec]">
       <Navbar />
 
-      <main className="mx-auto max-w-screen-lg px-6">
+      <main className="mx-auto max-w-screen-2xl">
         <LandingPage />
       </main>
 
