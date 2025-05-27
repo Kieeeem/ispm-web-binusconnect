@@ -3,9 +3,9 @@ import {Instagram, Facebook, Youtube} from 'lucide-react';
 
 const Footer = () => {
     return(
-         <footer className="bg-[#0099DC] text-white ">
+         <footer className="bg-[#0099DC] text-white">
       {/* Top section */}
-      <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between space-y-8 md:space-y-0">
+      <div className="max-w-7xl mx-auto px-0 py-12 flex flex-col md:flex-row justify-between space-y-8 md:space-y-0">
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <div className="w-10 h-10 bg-white rounded-full" />
@@ -42,7 +42,7 @@ const Footer = () => {
 
       {/* Bottom copyright */}
       <div className="">
-        <p className="max-w-4xl mx-auto px-6 py-4 text-center text-sm">
+        <p className="max-w-4xl mx-auto px-5 py-6 text-center text-[18px]">
           © 2025 by School of Information Systems – Bina Nusantara University
         </p>
       </div>
