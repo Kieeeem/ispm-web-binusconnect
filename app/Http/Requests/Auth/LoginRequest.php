@@ -22,10 +22,11 @@ class LoginRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
      */
     public function rules(): array
     {
+        // Kita juga perlu mengubah 'email' menjadi 'emailUser' di sini
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
@@ -41,10 +42,18 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // INI BAGIAN PALING PENTING YANG DIUBAH
+        // Kita beritahu Auth::attempt untuk menggunakan kolom kustom kita.
+        $credentials = [
+            'emailUser' => $this->input('email'), // Ambil dari input 'email', cocokan ke kolom 'emailUser'
+            'password' => $this->input('password')  // Ambil dari input 'password', Laravel otomatis cek ke 'passwordUser' karena sudah di-override di Model
+        ];
+
+        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
+                // Tampilkan error di field 'email' di frontend
                 'email' => trans('auth.failed'),
             ]);
         }
@@ -80,6 +89,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());
     }
 }

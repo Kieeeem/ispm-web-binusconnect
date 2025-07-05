@@ -1,37 +1,72 @@
 <?php
+
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'user'; // Nama tabel lo (bukan 'users')
-    protected $primaryKey = 'idUser'; // PK lo pake idUser
-    public $incrementing = false;
-    protected $keyType = 'string';
+    /**
+     * Menyesuaikan dengan struktur tabel dari ERD
+     */
+    protected $table = 'User'; // Nama tabel sesuai ERD
+    protected $primaryKey = 'idUser'; // Primary Key sesuai ERD
+    public $incrementing = false; // Karena idUser bukan auto-increment
+    protected $keyType = 'string'; // Karena idUser adalah char/string
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'idUser',
         'idUserType',
         'namaUser',
         'emailUser',
-        'nim',
         'passwordUser',
         'fotoUser',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
     protected $hidden = [
         'passwordUser',
         'remember_token',
     ];
 
-    // Tunjukkan ke Laravel kolom password yang harus dicek
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'passwordUser' => 'hashed', // Otomatis hash saat di-set
+    ];
+
+    /**
+     * Override untuk mendapatkan nama kolom email yang benar
+     */
+    public function getEmailForVerification()
+    {
+        return $this->emailUser;
+    }
+    
+    /**
+     * Override untuk mendapatkan nama kolom password yang benar
+     */
     public function getAuthPassword()
     {
         return $this->passwordUser;
     }
 }
-
