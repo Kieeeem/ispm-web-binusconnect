@@ -1,188 +1,153 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
+import MainLayout from '@/Layouts/MainLayout'; // Sesuaikan jika Anda punya layout utama
 
-// Komponen Halaman Utama (Wrapper)
-export default function Login({ status, canResetPassword }) {
-    const [isLogin, setIsLogin] = useState(true);
+// Komponen-komponen UI bisa Anda sesuaikan
+const Checkbox = ({ name, value, handleChange }) => (
+    <input
+        type="checkbox"
+        name={name}
+        value={value}
+        className="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+        onChange={(e) => handleChange(e)}
+    />
+);
 
-    const toggleForm = (e) => {
-        e.preventDefault();
-        setIsLogin(!isLogin);
-    };
+const InputLabel = ({ forInput, value, className, children }) => (
+    <label htmlFor={forInput} className={`block font-medium text-sm text-gray-700 ` + className}>
+        {value ? value : children}
+    </label>
+);
+
+const TextInput = ({ type = 'text', name, id, value, className, autoComplete, isFocused, handleChange }) => {
+    const input = React.useRef();
+
+    useEffect(() => {
+        if (isFocused) {
+            input.current.focus();
+        }
+    }, []);
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center font-sans p-4">
-            <Head title={isLogin ? "Log in" : "Register"} />
-            
-            <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-2xl shadow-lg relative">
-                <Link 
-                    href={route('landing')}
-                    className="absolute top-4 left-4 text-indigo-400 hover:text-indigo-300 transition-colors"
-                    aria-label="Back to Home"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                </Link>
-
-                {isLogin ? <LoginForm status={status} canResetPassword={canResetPassword} /> : <RegistrationForm />}
-
-                <p className="text-center text-sm text-gray-400">
-                    {isLogin ? "Belum punya akun?" : "Sudah punya akun?"}
-                    <a
-                        href="#"
-                        onClick={toggleForm}
-                        className="font-medium text-indigo-400 hover:text-indigo-300 focus:outline-none ml-2"
-                    >
-                        {isLogin ? 'Daftar di sini' : 'Masuk di sini'}
-                    </a>
-                </p>
-            </div>
-        </div>
+        <input
+            type={type}
+            name={name}
+            id={id}
+            value={value}
+            className={`border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm ` + className}
+            ref={input}
+            autoComplete={autoComplete}
+            onChange={(e) => handleChange(e)}
+        />
     );
-}
+};
+
+const InputError = ({ message, className = '' }) => (
+    message ? <p className={'text-sm text-red-600 ' + className}>{message}</p> : null
+);
+
+const PrimaryButton = ({ className = '', disabled, children, ...props }) => (
+    <button
+        {...props}
+        className={
+            `inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 ${
+                disabled && 'opacity-25'
+            } ` + className
+        }
+        disabled={disabled}
+    >
+        {children}
+    </button>
+);
 
 
-// --- Komponen Form Login (Sudah Dimodifikasi) ---
-function LoginForm({ status, canResetPassword }) {
-    // State untuk menampilkan pesan sukses
-    const [loginMessage, setLoginMessage] = useState('');
+// --- KOMPONEN UTAMA LOGIN ---
 
-    // Menggunakan useForm untuk menangani state, validasi, dan submit
+export default function Login({ status, canResetPassword }) {
+    // Gunakan useForm untuk menangani state dan submission
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
         remember: false,
     });
 
-    // Reset password saat komponen tidak ditampilkan
     useEffect(() => {
+        // Reset password field saat komponen di-unmount
         return () => {
             reset('password');
         };
     }, []);
 
-    // Fungsi submit yang baru
+    // Fungsi submit yang akan mengirim data ke backend
     const submit = (e) => {
         e.preventDefault();
-        setLoginMessage(''); // Hapus pesan lama setiap kali submit
-        
-        // Kirim data ke backend dengan callback onSuccess
-        post(route('login'), {
-            onSuccess: () => {
-                setLoginMessage('Login Berhasil! Selamat datang.');
-                reset('password'); // Kosongkan password setelah sukses
-            },
-        });
+        // 'post' dari useForm akan otomatis mengikuti redirect dari backend
+        post(route('login'));
     };
 
     return (
-         <div>
-            <h2 className="text-3xl font-extrabold text-center text-white">Sign in</h2>
-            {status && <div className="mb-4 font-medium text-sm text-green-500">{status}</div>}
-            
-            <form className="mt-8 space-y-6" onSubmit={submit}>
-                <div>
-                    <input 
-                        id="email" 
-                        name="email" 
-                        type="email" 
-                        value={data.email}
-                        autoComplete="username"
-                        required 
-                        onChange={(e) => setData('email', e.target.value)}
-                        className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-900 placeholder-gray-500 text-white rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Alamat Email" 
-                    />
-                    {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email}</p>}
-                </div>
-                <div>
-                    <input 
-                        id="password" 
-                        name="password" 
-                        type="password" 
-                        value={data.password}
-                        autoComplete="current-password"
-                        required 
-                        onChange={(e) => setData('password', e.target.value)}
-                        className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-900 placeholder-gray-500 text-white rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Password" 
-                    />
-                    {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password}</p>}
-                </div>
+        // Anda bisa membungkusnya dengan MainLayout jika ada
+        // <MainLayout> 
+            <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+                <Head title="Log in" />
 
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <input id="remember" name="remember" type="checkbox" checked={data.remember} onChange={(e) => setData('remember', e.target.checked)} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-600 rounded bg-gray-800"/>
-                        <label htmlFor="remember" className="ml-2 block text-sm text-gray-400">Remember me</label>
-                    </div>
-                    {canResetPassword && (
-                        <div className="text-sm">
-                            <Link href={route('password.request')} className="font-medium text-indigo-400 hover:text-indigo-300">
-                                Lupa password?
-                            </Link>
+                {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
+
+                <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+                    <form onSubmit={submit}>
+                        <div>
+                            <InputLabel forInput="email" value="Email" />
+                            <TextInput
+                                id="email"
+                                type="email"
+                                name="email"
+                                value={data.email}
+                                className="mt-1 block w-full"
+                                autoComplete="username"
+                                isFocused={true}
+                                handleChange={(e) => setData('email', e.target.value)}
+                            />
+                            <InputError message={errors.email} className="mt-2" />
                         </div>
-                    )}
-                </div>
 
-                <button type="submit" disabled={processing} className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                    {processing ? 'Processing...' : 'Sign in'}
-                </button>
-            </form>
+                        <div className="mt-4">
+                            <InputLabel forInput="password" value="Password" />
+                            <TextInput
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={data.password}
+                                className="mt-1 block w-full"
+                                autoComplete="current-password"
+                                handleChange={(e) => setData('password', e.target.value)}
+                            />
+                            <InputError message={errors.password} className="mt-2" />
+                        </div>
 
-            {/* Blok untuk menampilkan pesan sukses */}
-            {loginMessage && (
-                <div className="mt-4 rounded-md bg-green-900 p-4 text-center">
-                    <p className="font-medium text-green-300">{loginMessage}</p>
-                </div>
-            )}
-         </div>
-    );
-}
+                        <div className="block mt-4">
+                            <label className="flex items-center">
+                                <Checkbox name="remember" value={data.remember} handleChange={(e) => setData('remember', e.target.checked)} />
+                                <span className="ms-2 text-sm text-gray-600">Remember me</span>
+                            </label>
+                        </div>
 
-// --- Komponen Form Registrasi (Juga sudah dimodifikasi agar konsisten) ---
-function RegistrationForm() {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-    });
+                        <div className="flex items-center justify-end mt-4">
+                            {canResetPassword && (
+                                <Link
+                                    href={route('password.request')}
+                                    className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                >
+                                    Forgot your password?
+                                </Link>
+                            )}
 
-    useEffect(() => {
-        return () => {
-            reset('password', 'password_confirmation');
-        };
-    }, []);
-
-    const submit = (e) => {
-        e.preventDefault();
-        // Untuk registrasi, kita biarkan default behavior Breeze (redirect ke dashboard)
-        post(route('register'));
-    };
-
-    return (
-        <div>
-            <h2 className="text-3xl font-extrabold text-center text-white">Buat Akun Baru</h2>
-            <form className="mt-8 space-y-6" onSubmit={submit}>
-                <div>
-                    <input id="name" name="name" type="text" value={data.name} required onChange={(e) => setData('name', e.target.value)} className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-900 placeholder-gray-500 text-white rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Nama" />
-                    {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
+                            <PrimaryButton className="ms-4" disabled={processing}>
+                                Log in
+                            </PrimaryButton>
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    <input id="email-address-reg" name="email" type="email" value={data.email} required onChange={(e) => setData('email', e.target.value)} className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-900 placeholder-gray-500 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Alamat Email" />
-                    {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email}</p>}
-                </div>
-                <div>
-                    <input id="password-reg" name="password" type="password" value={data.password} required onChange={(e) => setData('password', e.target.value)} className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-900 placeholder-gray-500 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Password" />
-                    {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password}</p>}
-                </div>
-                <div>
-                    <input id="password-confirmation" name="password_confirmation" type="password" value={data.password_confirmation} required onChange={(e) => setData('password_confirmation', e.target.value)} className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-900 placeholder-gray-500 text-white rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Konfirmasi Password" />
-                    {errors.password_confirmation && <p className="mt-1 text-xs text-red-400">{errors.password_confirmation}</p>}
-                </div>
-                <button type="submit" disabled={processing} className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                    {processing ? 'Processing...' : 'Buat Akun'}
-                </button>
-            </form>
-        </div>
+            </div>
+        // </MainLayout>
     );
 }

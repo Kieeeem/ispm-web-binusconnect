@@ -4,19 +4,17 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Menampilkan halaman login.
      */
-    public function create(): Response
+    public function create()
     {
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
@@ -25,7 +23,7 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Menangani request login yang masuk.
      */
     public function store(LoginRequest $request)
     {
@@ -33,13 +31,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-         return response()->json(['message' => 'Login successful'], 200);
+        // INI BARIS KUNCINYA:
+        // Selalu redirect ke route 'forum' setelah login berhasil.
+        return redirect()->route('forum');
     }
 
     /**
-     * Destroy an authenticated session.
+     * Menghancurkan sesi (logout).
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
 
