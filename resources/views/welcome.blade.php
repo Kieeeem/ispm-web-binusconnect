@@ -98,7 +98,7 @@
     </style>
 </head>
 <body>
-    <div id="root">
+    <div id="app">
 
     </div>
 </body>

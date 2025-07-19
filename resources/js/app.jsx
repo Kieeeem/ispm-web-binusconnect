@@ -2,26 +2,39 @@ import React from 'react';
 import ReactDOM from "react-dom/client";
 import "../css/app.css";
 
+import {BrowserRouter} from 'react-router-dom';
+
 import Navbar from './components/navbar';
 // import BinusConnect from './Pages/BinusConnect';
 import LandingPage from './Pages/LandingPage';
 import Footer from './components/footer';
+import MarketplaceDetail from './Pages/MarketPlaceDetail';
+import Marketplace from './Pages/Marketplace';
+
+import App from './components/app'; 
+import Index from './router/Index';
+
+ReactDOM.createRoot(document.getElementById('app')).render(
+  <BrowserRouter> 
+   <App />
+  </BrowserRouter>
+)
+  
 
 
+// const App = () => {
+//     return (
+//     <div className="min-h-screen bg-[#ececec]">
+//       <Navbar />
 
-const App = () => {
-    return (
-    <div className="min-h-screen bg-[#ececec]">
-      <Navbar />
+//       <main className="mx-auto max-w-screen-2xl">
+//         <LandingPage />
+//       </main>
 
-      <main className="mx-auto max-w-screen-2xl">
-        <LandingPage />
-      </main>
+//       <Footer />
+//     </div>
+//   );
+// };
 
-      <Footer />
-    </div>
-  );
-};
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(<App />);

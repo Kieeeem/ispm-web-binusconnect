@@ -1,0 +1,201 @@
+.marketplaceFormContainer {
+  max-width: 1920px;
+  margin: 0 auto;
+  font-family: 'Poppins';
+}
+.form-header {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 12px;
+    gap: 10px;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.back-button img {
+    width: 68px; 
+    height: 68px; 
+}
+
+.form-title {
+  font-style: semibold;
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 40px;
+  text-align: left;
+  color: #292929;
+}
+.form-section {
+  margin-bottom: 25px;
+  margin-right: 100px;
+  margin-left: 100px;
+  background-color: #ffffff;
+  padding-top: 20px;
+  padding-bottom: 36px;
+  padding-right: 40px;
+  padding-left: 40px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+}
+.form-label{
+    font-style: semibold;
+    font-size: 26px;
+    font-weight: 600;
+    text-align: left;
+    color: #292929;
+}
+.upload-area {
+  background-color: #EFEFEF;
+  padding: 20px;
+  font-style: semibold;
+  font-weight: 400;
+  margin-top: 20px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 8px;
+  color: #00AEEF;
+  transition: background-color 0.2s ease;
+}
+
+.upload-area:hover {
+  background-color: #EFEFEF;
+  opacity: 60%;
+}
+
+.section-title {
+  font-style: semibold;
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #292929;
+}
+
+.form-group {
+  margin-bottom: 15px;
+
+}
+
+.form-group label {
+  display: block;
+  font-style: semibold;
+  font-size: 20px;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #292929;
+}
+
+
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg fill='black' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.23 7.21a.75.75 0 011.06.02L10 10.939l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.27a.75.75 0 01-.02-1.06z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px 16px;
+    padding-right: 40px; /* Ruang buat arrow */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 12px;
+    width: 100%;
+    font-family: 'Poppins';
+    font-size: 15px;
+    color: #292929;
+    transition: border-color 0.2s ease;
+}
+
+.form-group select:focus {
+    border-color: #00AEEF;
+}
+
+.form-group option {
+    color: #292929;
+}
+
+.form-group select option:disabled {
+    color: #777272; 
+}
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease;
+    color: #656565;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #00AEEF;
+    color: #656565;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-double {
+    display: flex;
+    gap: 32px;
+}
+
+.form-double .form-group {
+    flex: 1;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #777272;
+    font-family: 'Poppins';
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea,
+input[type="date"],
+input[type="time"],
+select,
+option {
+    color: #777272;
+    font-family: 'Poppins';
+}
+
+.form-submit-container {
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+.submit-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    background-color: #00AEEF;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: background-color 0.2s ease;
+    margin-top: 20px;
+}
+
+.submit-btn:hover {
+  background-color: #00AEEF;
+  opacity: 60%;
+}
+
+
+.required {
+  color: red;
+}
