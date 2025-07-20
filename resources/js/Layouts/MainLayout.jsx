@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@inertiajs/react'; // Make sure Link is imported
+import { Link } from '@inertiajs/react';
 
 const MainLayout = ({ children }) => {
   return (
@@ -12,17 +12,18 @@ const MainLayout = ({ children }) => {
               Binus Connect
             </Link>
           </div>
-          <div className="flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-6">
             <Link href="/" className="text-gray-600 hover:text-blue-500">Home</Link>
-            
-            {/* --- THIS IS THE MODIFIED LINE --- */}
             <Link href={route('forum')} className="text-gray-600 hover:text-blue-500">
               Forum
             </Link>
-            {/* ---------------------------------- */}
-
             <Link href="#" className="text-gray-600 hover:text-blue-500">Events</Link>
-            <Link href="#" className="text-gray-600 hover:text-blue-500">Marketplace</Link>
+            
+            {/* --- PERUBAHAN DI SINI --- */}
+            <Link href={route('marketplace')} className="text-gray-600 hover:text-blue-500">
+                Marketplace
+            </Link>
+            {/* ------------------------- */}
           </div>
           <div>
             <Link 
@@ -39,7 +40,6 @@ const MainLayout = ({ children }) => {
         {children}
       </main>
 
-      {/* You can add a footer here if you have one */}
       {/* <footer className="bg-gray-800 text-white text-center p-4">
         © 2024 Binus Connect. All rights reserved.
       </footer> */}

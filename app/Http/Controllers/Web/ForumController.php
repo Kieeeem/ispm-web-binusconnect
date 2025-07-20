@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Forum;
 use App\Models\ForumCategory;
+use App\Models\User; // Pastikan model User di-import
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use App\Models\User;
 
 class ForumController extends Controller
 {
+    /**
+     * Menampilkan halaman utama forum dengan semua post.
+     */
     public function index()
     {
         $forums = Forum::with('user', 'category')->latest()->get();
@@ -24,10 +27,11 @@ class ForumController extends Controller
         ]);
     }
 
+    /**
+     * Menyimpan post forum baru.
+     */
     public function store(Request $request)
     {
-        // --- PERUBAHAN DI SINI ---
-        // Sesuaikan aturan validasi dengan nama kolom yang benar (d kecil).
         $request->validate([
             'judulForum' => 'required|string|max:100',
             'isiForum' => 'required|string',
@@ -56,12 +60,46 @@ class ForumController extends Controller
         return Redirect::route('forum')->with('success', 'Forum berhasil diposting!');
     }
 
+    /**
+     * Menampilkan halaman detail untuk satu post.
+     */
     public function show(Forum $forum)
     {
+        // Memuat relasi untuk ditampilkan di halaman detail
         $forum->load('user', 'category', 'replies.user');
 
         return Inertia::render('ForumDetailPage', [
             'forumDetail' => $forum
         ]);
+    }
+
+    /**
+     * Menyimpan balasan baru untuk sebuah forum.
+     */
+    public function storeReply(Request $request, Forum $forum)
+    {
+        $request->validate([
+            'isiReplyForum' => 'required|string',
+        ]);
+
+        $userId = auth()->id();
+        if (!$userId) {
+            $defaultUser = User::first();
+            $userId = $defaultUser ? $defaultUser->idUser : null;
+        }
+
+        if (!$userId) {
+            return back()->withErrors(['user' => 'Tidak dapat membalas. Tidak ada user default.']);
+        }
+
+        // Membuat balasan baru yang berelasi dengan forum ini
+        $forum->replies()->create([
+            'idReplyForum'  => Str::random(10),
+            'isiReplyForum' => $request->isiReplyForum,
+            'idUser'        => $userId,
+        ]);
+
+        // Redirect kembali ke halaman detail forum sebelumnya
+        return Redirect::back()->with('success', 'Balasan berhasil dikirim!');
     }
 }

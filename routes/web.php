@@ -20,10 +20,13 @@ Route::get('/', function () {
     ]);
 })->name('landing');
 
-// --- FORUM ROUTES (SEKARANG MENJADI PUBLIK) ---
+// --- FORUM ROUTES (PUBLIK UNTUK TES) ---
 Route::get('/forum', [ForumController::class, 'index'])->name('forum');
 Route::post('/forum', [ForumController::class, 'store'])->name('forum.store');
 Route::get('/forum/{forum}', [ForumController::class, 'show'])->name('forum.show');
+
+// ** ROUTE BARU UNTUK MENYIMPAN BALASAN **
+Route::post('/forum/{forum}/replies', [ForumController::class, 'storeReply'])->name('replies.store');
 
 
 // Dashboard Route (Tetap perlu login)
@@ -36,9 +39,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Route forum sudah dipindahkan ke luar grup ini
 });
+
+//marketplace
+Route::get('/marketplace', function () {
+    // Nanti, Anda akan memanggil controller di sini untuk mengambil data produk
+    return Inertia::render('MarketplacePage'); 
+})->name('marketplace');
+
+//detail marketplace
+Route::get('/marketplace/{product}', function () {
+    return Inertia::render('MarketplaceDetailPage');
+})->name('marketplace.show');
 
 
 // This line includes all the default authentication routes (login, register, etc.)
