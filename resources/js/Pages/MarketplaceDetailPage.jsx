@@ -35,7 +35,6 @@ const ImageGallery = ({ images }) => {
     );
 };
 
-// ** KOMPONEN DISKUSI SEKARANG SUDAH LENGKAP **
 const DiscussionSection = ({ discussions = [], productId }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
         content: '',
@@ -97,8 +96,11 @@ export default function MarketplaceDetailPage({ product }) {
         return <div>Loading product details...</div>;
     }
 
-    const { idMarketplace, judulMarketplace, foto_url, statusMarketplace, jadwalStartMarketplace, jadwalEndMarketplace, lokasiMarketplace, user, deskripsiMarketplace, discussions } = product;
-    const images = foto_url ? [foto_url] : [];
+    const { idMarketplace, judulMarketplace, fotoMarketplace, statusMarketplace, jadwalStartMarketplace, jadwalEndMarketplace, lokasiMarketplace, user, deskripsiMarketplace, discussions } = product;
+    
+    // --- PERBAIKAN DI SINI ---
+    // Membuat URL gambar dari 'fotoMarketplace', bukan 'foto_url'
+    const images = fotoMarketplace ? [`/storage/${fotoMarketplace}`] : [];
 
     return (
         <>
@@ -121,7 +123,6 @@ export default function MarketplaceDetailPage({ product }) {
                         <div className="space-y-6">
                             <h1 className="text-3xl font-bold text-gray-900">{judulMarketplace}</h1>
                             
-                            {/* ** BAGIAN INFO PRODUK DIPERBAIKI SESUAI FIGMA ** */}
                             <div className="space-y-4 text-base mt-4">
                                 <div className="flex items-center">
                                     <span className="text-gray-500 w-32">Status</span>

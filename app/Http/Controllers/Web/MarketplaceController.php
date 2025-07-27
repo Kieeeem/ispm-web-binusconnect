@@ -47,10 +47,7 @@ class MarketplaceController extends Controller
         $userId = auth()->id() ?? User::first()->idUser;
 
         // Simpan file gambar ke storage dan dapatkan path-nya
-        $fotoPath = null;
-        if ($request->hasFile('fotoMarketplace')) {
-            $fotoPath = $request->file('fotoMarketplace')->store('marketplace_photos', 'public');
-        }
+        $fotoPath = $request->file('fotoMarketplace')->store('marketplace_photos', 'public');
 
         Marketplace::create([
             'idMarketplace' => Str::random(10),
