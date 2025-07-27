@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Web\ForumController; 
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\Web\ForumController;
+use App\Http\Controllers\Web\MarketplaceController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,38 +20,25 @@ Route::get('/', function () {
     ]);
 })->name('landing');
 
-// --- FORUM ROUTES (PUBLIK UNTUK TES) ---
+
+// --- FORUM ROUTES ---
 Route::get('/forum', [ForumController::class, 'index'])->name('forum');
 Route::post('/forum', [ForumController::class, 'store'])->name('forum.store');
 Route::get('/forum/{forum}', [ForumController::class, 'show'])->name('forum.show');
-
-// ** ROUTE BARU UNTUK MENYIMPAN BALASAN **
 Route::post('/forum/{forum}/replies', [ForumController::class, 'storeReply'])->name('replies.store');
 
 
-// Dashboard Route (Tetap perlu login)
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// --- MARKETPLACE ROUTES ---
+Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace');
+Route::get('/marketplace/create', [MarketplaceController::class, 'create'])->name('marketplace.create');
+Route::post('/marketplace', [MarketplaceController::class, 'store'])->name('marketplace.store');
+Route::get('/marketplace/{product}', [MarketplaceController::class, 'show'])->name('marketplace.show');
 
-// Authenticated User Routes (Profile)
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// ** ROUTE BARU UNTUK MENAMPILKAN FOTO **
+Route::get('/marketplace/photo/{product}', [MarketplaceController::class, 'showPhoto'])->name('marketplace.photo');
 
-//marketplace
-Route::get('/marketplace', function () {
-    // Nanti, Anda akan memanggil controller di sini untuk mengambil data produk
-    return Inertia::render('MarketplacePage'); 
-})->name('marketplace');
-
-//detail marketplace
-Route::get('/marketplace/{product}', function () {
-    return Inertia::render('MarketplaceDetailPage');
-})->name('marketplace.show');
+Route::post('/marketplace/{product}/discussion', [MarketplaceController::class, 'storeDiscussion'])->name('marketplace.discussion.store');
 
 
-// This line includes all the default authentication routes (login, register, etc.)
+// ... sisa route lainnya ...
 require __DIR__.'/auth.php';

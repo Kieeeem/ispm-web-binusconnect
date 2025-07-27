@@ -14,39 +14,29 @@ class Marketplace extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    /**
-     * The attributes that are mass assignable.
-     */
     protected $fillable = [
-        'idMarketplace',
-        'idUser',
-        'idOrganisasi',
-        'judulMarketplace',
-        'deskripsiMarketplace',
-        'lokasiMarketplace',
-        'jadwalStartMarketplace',
-        'jadwalEndMarketplace',
-        'fotoMarketplace',
-        'statusMarketplace',
+        'idMarketplace', 'idUser', 'idOrganisasi', 'judulMarketplace',
+        'deskripsiMarketplace', 'lokasiMarketplace', 'jadwalStartMarketplace',
+        'jadwalEndMarketplace', 'fotoMarketplace', 'statusMarketplace',
     ];
 
-    /**
-     * The attributes that should be cast.
-     */
     protected $casts = [
-        'jadwalStartMarketplace' => 'date', // Ganti dengan nama kolom yang baru
+        'jadwalStartMarketplace' => 'datetime',
+        'jadwalEndMarketplace' => 'datetime',
     ];
 
-    /**
-     * Relasi ke User: Satu item Marketplace dimiliki oleh satu User.
-     */
+    public function getRouteKeyName()
+    {
+        return 'idMarketplace';
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'idUser', 'idUser');
     }
 
     public function discussions()
-{
-    return $this->hasMany(MarketplaceDiscussion::class, 'idMarketplace', 'idMarketplace');
-}
+    {
+        return $this->hasMany(MarketplaceDiscussion::class, 'idMarketplace', 'idMarketplace');
+    }
 }
