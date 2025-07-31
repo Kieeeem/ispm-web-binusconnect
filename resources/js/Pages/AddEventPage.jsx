@@ -1,130 +1,169 @@
 import React, { useState } from 'react';
 import MainLayout from '@/Layouts/MainLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 
 // --- ICONS ---
-const SearchIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg> );
-const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg> );
-
-// Kategori statis untuk filter
-const categories = ['All', 'Webinar', 'Lomba', 'ComServ', 'Workshop'];
+const BackArrowIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg> );
+const UploadIcon = ({ className = '' }) => ( <svg xmlns="http://www.w3.org/2000/svg" className={`h-8 w-8 text-gray-400 ${className}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg> );
 
 // --- UI COMPONENTS ---
 
-const EventCard = ({ event }) => {
-    // Fungsi untuk mencocokkan ID kategori dengan nama kategori
-    const getCategoryName = (categoryId) => {
-        switch(categoryId) {
-            case 'CAT001': return 'Webinar';
-            case 'CAT002': return 'Lomba';
-            case 'CAT003': return 'ComServ';
-            case 'CAT004': return 'Workshop';
-            default: return 'Event';
-        }
-    };
-    
-    const categoryName = getCategoryName(event.idEventOpportunityCategory);
+const InputLabel = ({ children }) => (
+    <label className="block text-sm font-medium text-gray-700 mb-1">{children}</label>
+);
 
-    const categoryColors = {
-        Webinar: 'text-purple-600',
-        Lomba: 'text-pink-600',
-        ComServ: 'text-indigo-600',
-        Workshop: 'text-blue-600',
+const TextInput = ({ name, value, onChange, placeholder, type = 'text' }) => (
+    <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+    />
+);
+
+const Textarea = ({ name, value, onChange, placeholder, rows = 4 }) => (
+    <textarea
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        rows={rows}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+    ></textarea>
+);
+
+const FileInput = ({ name, setData, preview, setPreview }) => {
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setData(name, file);
+            setPreview(URL.createObjectURL(file));
+        }
     };
 
     return (
-        // Kartu dibungkus dengan Link yang benar
-        <Link href={route('events.show', event.idEventOpportunity)} className="block group">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden transform group-hover:-translate-y-1 transition-transform duration-300">
-                {/* Menggunakan data asli dari database */}
-                <img 
-                    src={`/storage/${event.fotoEvent}`} 
-                    alt={event.judulEvent} 
-                    className="w-full h-40 object-cover bg-gray-200"
-                    onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/600x400/cccccc/333333?text=Image+Not+Found'; }}
-                />
-                <div className="p-4">
-                    <p className={`text-sm font-bold uppercase ${categoryColors[categoryName] || 'text-gray-600'}`}>
-                        {categoryName}
-                    </p>
-                    <h3 className="text-lg font-semibold text-gray-900 mt-1 truncate">{event.judulEvent}</h3>
-                    <div className="text-gray-500 group-hover:text-blue-600 text-sm font-medium mt-2 inline-block">
-                        Selengkapnya
-                    </div>
+        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+            <div className="space-y-1 text-center">
+                {preview ? (
+                    <img src={preview} alt="Preview" className="mx-auto h-24 w-auto object-contain" />
+                ) : (
+                    <UploadIcon className="mx-auto" />
+                )}
+                <div className="flex text-sm text-gray-600 justify-center">
+                    <label htmlFor={name} className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                        <span>Click to upload</span>
+                        <input id={name} name={name} type="file" className="sr-only" onChange={handleFileChange} />
+                    </label>
+                    <p className="pl-1">or drag and drop</p>
                 </div>
+                <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
             </div>
-        </Link>
+        </div>
     );
 };
 
-// --- MAIN PAGE COMPONENT ---
-// Menerima 'events' sebagai props dari controller
-export default function EventsPage({ events = [] }) {
-    const [activeCategory, setActiveCategory] = useState('All');
 
-    // Logika filter disempurnakan untuk mencocokkan dengan data asli
-    const filteredEvents = events.filter(event => {
-        const getCategoryName = (categoryId) => {
-            switch(categoryId) {
-                case 'CAT001': return 'Webinar';
-                case 'CAT002': return 'Lomba';
-                case 'CAT003': return 'ComServ';
-                case 'CAT004': return 'Workshop';
-                default: return 'Event';
-            }
-        };
-        return activeCategory === 'All' || getCategoryName(event.idEventOpportunityCategory) === activeCategory;
+// --- MAIN PAGE COMPONENT ---
+export default function AddEventPage({ categories = [] }) {
+    const { data, setData, post, processing, errors } = useForm({
+        fotoEvent: null,
+        judulEvent: '',
+        idEventOpportunityCategory: '',
+        deskripsiEvent: '',
+        lokasiEvent: '',
+        jadwalStartEvent: '',
+        jadwalEndEvent: '',
+        linkRegistrasi: '',
     });
+
+    const [posterPreview, setPosterPreview] = useState(null);
+
+    const submit = (e) => {
+        e.preventDefault();
+        post(route('events.store'));
+    };
 
     return (
         <>
-            <Head title="Events" />
-            <div className="bg-gray-100 min-h-screen">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    
-                    <div className="relative mb-6">
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <SearchIcon />
-                        </span>
-                        <input
-                            type="search"
-                            placeholder="Search event favoritmu"
-                            className="w-full py-3 pl-10 pr-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+            <Head title="Add Event" />
+            <div className="bg-gray-100 py-8">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center mb-6">
+                        <Link href={route('events')} className="inline-flex items-center p-2 rounded-full bg-white shadow hover:bg-gray-200 transition">
+                            <BackArrowIcon />
+                        </Link>
+                        <h1 className="text-2xl font-bold text-gray-800 ml-4">Event Form</h1>
                     </div>
 
-                    <div className="flex space-x-2 mb-8 overflow-x-auto pb-2">
-                        {categories.map(category => (
-                            <button
-                                key={category}
-                                onClick={() => setActiveCategory(category)}
-                                className={`px-4 py-2 rounded-full font-semibold text-sm whitespace-nowrap ${
-                                    activeCategory === category
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-white text-gray-700 hover:bg-gray-200'
-                                }`}
-                            >
-                                {category}
+                    <form onSubmit={submit} className="space-y-8">
+                        {/* Poster Section */}
+                        <div className="bg-white p-6 rounded-lg shadow">
+                            <InputLabel>Poster*</InputLabel>
+                            <FileInput name="fotoEvent" setData={setData} preview={posterPreview} setPreview={setPosterPreview} />
+                            {errors.fotoEvent && <p className="text-red-500 text-sm mt-1">{errors.fotoEvent}</p>}
+                        </div>
+
+                        {/* Event Information Section */}
+                        <div className="bg-white p-6 rounded-lg shadow space-y-4">
+                            <h2 className="text-lg font-semibold text-gray-900">Event Information</h2>
+                            <div>
+                                <InputLabel>Judul Event*</InputLabel>
+                                <TextInput name="judulEvent" value={data.judulEvent} onChange={e => setData('judulEvent', e.target.value)} placeholder="Input judul di sini yaa!!" />
+                                {errors.judulEvent && <p className="text-red-500 text-sm mt-1">{errors.judulEvent}</p>}
+                            </div>
+                            <div>
+                                <InputLabel>Kategori Event*</InputLabel>
+                                <select name="idEventOpportunityCategory" value={data.idEventOpportunityCategory} onChange={e => setData('idEventOpportunityCategory', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Category</option>
+                                    <option value="CAT001">Webinar</option>
+                                    <option value="CAT002">Lomba</option>
+                                    <option value="CAT003">Comserv</option>
+                                    <option value="CAT004">Workshop</option>
+                                </select>
+                                {errors.idEventOpportunityCategory && <p className="text-red-500 text-sm mt-1">{errors.idEventOpportunityCategory}</p>}
+                            </div>
+                            <div>
+                                <InputLabel>Deskripsi Event*</InputLabel>
+                                <Textarea name="deskripsiEvent" value={data.deskripsiEvent} onChange={e => setData('deskripsiEvent', e.target.value)} placeholder="Input deskripsi di sini yaa!!" />
+                                {errors.deskripsiEvent && <p className="text-red-500 text-sm mt-1">{errors.deskripsiEvent}</p>}
+                            </div>
+                            <div>
+                                <InputLabel>Lokasi Event*</InputLabel>
+                                <TextInput name="lokasiEvent" value={data.lokasiEvent} onChange={e => setData('lokasiEvent', e.target.value)} placeholder="Input lokasi di sini" />
+                                {errors.lokasiEvent && <p className="text-red-500 text-sm mt-1">{errors.lokasiEvent}</p>}
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <InputLabel>Start Date & Time*</InputLabel>
+                                    <TextInput name="jadwalStartEvent" type="datetime-local" value={data.jadwalStartEvent} onChange={e => setData('jadwalStartEvent', e.target.value)} />
+                                    {errors.jadwalStartEvent && <p className="text-red-500 text-sm mt-1">{errors.jadwalStartEvent}</p>}
+                                </div>
+                                <div>
+                                    <InputLabel>End Date & Time*</InputLabel>
+                                    <TextInput name="jadwalEndEvent" type="datetime-local" value={data.jadwalEndEvent} onChange={e => setData('jadwalEndEvent', e.target.value)} />
+                                    {errors.jadwalEndEvent && <p className="text-red-500 text-sm mt-1">{errors.jadwalEndEvent}</p>}
+                                </div>
+                            </div>
+                            <div>
+                                <InputLabel>Link Registrasi*</InputLabel>
+                                <TextInput name="linkRegistrasi" value={data.linkRegistrasi} onChange={e => setData('linkRegistrasi', e.target.value)} placeholder="Input link di sini yaa!!" />
+                                {errors.linkRegistrasi && <p className="text-red-500 text-sm mt-1">{errors.linkRegistrasi}</p>}
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="pb-8">
+                            <button type="submit" disabled={processing} className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 disabled:opacity-50">
+                                {processing ? 'Submitting...' : 'Submit'}
                             </button>
-                        ))}
-                    </div>
-
-                    {/* Events Grid dirender menggunakan data asli */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredEvents.map(event => (
-                            <EventCard key={event.idEventOpportunity} event={event} />
-                        ))}
-                    </div>
-
+                        </div>
+                    </form>
                 </div>
             </div>
-
-            <Link href={route('events.create')} className="fixed bottom-8 right-8 bg-blue-500 text-white px-6 py-3 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-transform duration-200 hover:scale-105">
-                <PlusIcon />
-                <span className="ml-2 font-bold">Add Event</span>
-            </Link>
         </>
     );
 }
 
-EventsPage.layout = page => <MainLayout children={page} />;
+AddEventPage.layout = page => <MainLayout children={page} />;

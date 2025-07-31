@@ -32,7 +32,7 @@ const MainLayout = ({ children }) => {
                         <div className="hidden md:flex items-center space-x-8">
                             <Link href="/dashboard" className="text-gray-600 hover:text-blue-600">Dashboard</Link>
                             <Link href="/events" className="text-gray-600 hover:text-blue-600">Event</Link>
-                            <Link href="#" className="text-gray-600 hover:text-blue-600">Organization</Link>
+                            <Link href="/organization" className="text-gray-600 hover:text-blue-600">Organization</Link>
                             <Link href="/forum" className="text-gray-600 hover:text-blue-600">Forum</Link>
                             <Link href="/marketplace" className="text-gray-600 hover:text-blue-600">Marketplace</Link>
                         </div>

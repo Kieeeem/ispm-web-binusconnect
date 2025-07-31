@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Web\EventController; // Pastikan ini di-import
+use App\Http\Controllers\Web\EventController; 
+use App\Http\Controllers\Web\OrganizationController; 
 use App\Http\Controllers\Web\ForumController;
 use App\Http\Controllers\Web\MarketplaceController;
 use Illuminate\Foundation\Application;
@@ -40,6 +41,13 @@ Route::get('/events', [EventController::class, 'index'])->name('events');
 Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
 Route::post('/events', [EventController::class, 'store'])->name('events.store');
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+
+//organization
+Route::get('/organization', [OrganizationController::class, 'index'])->name('organization.index');
+
+Route::get('/organization/{organization}', [OrganizationController::class, 'show'])->name('organization.show');
+
+
 
 
 // Dashboard Route (Requires login)

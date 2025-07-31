@@ -60,6 +60,10 @@ const EventCard = ({ event }) => {
 // --- MAIN PAGE COMPONENT ---
 // Menerima 'events' sebagai props dari controller
 export default function EventsPage({ events = [] }) {
+    // --- TES DEBUGGING: Cek data yang diterima dari controller ---
+    console.log('Data events dari controller:', events);
+    // -----------------------------------------------------------
+
     const [activeCategory, setActiveCategory] = useState('All');
 
     // Logika filter disempurnakan untuk mencocokkan dengan data asli
