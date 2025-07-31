@@ -10,13 +10,8 @@ const SearchIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-
 
 // --- MAIN PAGE COMPONENT ---
 export default function EventDetailPage({ eventDetail }) {
-    // Guard clause untuk memastikan eventDetail ada sebelum render
     if (!eventDetail) {
-        return (
-            <MainLayout>
-                <div className="text-center p-10">Loading event details...</div>
-            </MainLayout>
-        );
+        return <div>Loading event...</div>;
     }
 
     const {
@@ -24,13 +19,12 @@ export default function EventDetailPage({ eventDetail }) {
         idEventOpportunityCategory,
         created_at,
         fotoEvent,
-        penyelenggaraEvent,
         linkRegistrasi,
         lokasiEvent,
         jadwalStartEvent,
         jadwalEndEvent,
         deskripsiEvent,
-        organisasi
+        organization // Data organisasi yang berelasi
     } = eventDetail;
 
     const getCategoryName = (categoryId) => {
@@ -43,30 +37,18 @@ export default function EventDetailPage({ eventDetail }) {
         }
     };
 
-    // Fungsi aman untuk memformat tanggal, mencegah error jika data null
-    const formatDate = (dateString, options) => {
-        if (!dateString) return 'Tidak tersedia';
-        const defaultOptions = {
-            year: 'numeric', month: 'long', day: 'numeric',
-            hour: '2-digit', minute: '2-digit',
-            hour12: false
-        };
-        return new Date(dateString).toLocaleString('id-ID', options || defaultOptions);
-    };
-
-    const postedDate = formatDate(created_at, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    const scheduleStart = formatDate(jadwalStartEvent) + ' WIB';
-    const scheduleEnd = formatDate(jadwalEndEvent) + ' WIB';
+    // Formatting tanggal
+    const postedDate = new Date(created_at).toLocaleString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const scheduleStart = new Date(jadwalStartEvent).toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' WIB';
+    const scheduleEnd = new Date(jadwalEndEvent).toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' WIB';
 
     return (
         <>
-            <Head title={judulEvent || 'Event Detail'} />
+            <Head title={judulEvent} />
             <div className="bg-gray-100 min-h-screen">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Top Bar: Back Button & Search */}
                     <div className="flex justify-between items-center mb-6">
-                            {/* --- PERBAIKAN DI SINI --- */}
-                            {/* Menggunakan URL langsung untuk menghindari error Ziggy */}
                         <Link href="/events" className="inline-flex items-center p-2 rounded-full bg-white shadow hover:bg-gray-200 transition">
                             <BackArrowIcon />
                         </Link>
@@ -79,9 +61,10 @@ export default function EventDetailPage({ eventDetail }) {
                     {/* Banner Section */}
                     <div className="w-full h-80 bg-gray-200 rounded-lg shadow-lg overflow-hidden">
                         <img 
-                            src={fotoEvent ? `/storage/${fotoEvent}` : 'https://placehold.co/1200x400/cccccc/333333?text=Event+Banner'} 
-                            alt={judulEvent || 'Event Banner'} 
+                            src={`/storage/${fotoEvent}`} 
+                            alt={judulEvent} 
                             className="w-full h-full object-cover"
+                            onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/1200x400/cccccc/333333?text=Event+Banner'; }}
                         />
                     </div>
 
@@ -91,17 +74,38 @@ export default function EventDetailPage({ eventDetail }) {
                         <div className="md:col-span-1 space-y-6">
                             <div className="bg-white p-4 rounded-lg shadow">
                                 <p className="text-sm text-gray-500">Posted on {postedDate}</p>
-                                <h2 className="text-xl font-bold text-gray-900 mt-1"> {judulEvent}</h2>
+                                <h2 className="text-xl font-bold text-gray-900 mt-1">{getCategoryName(idEventOpportunityCategory)} {judulEvent}</h2>
                             </div>
-                            <div className="bg-white p-4 rounded-lg shadow">
-                                <div className="flex items-center">
-                                    <img src={organisasi?.fotoOrganisasi ? `/storage/${organisasi.fotoOrganisasi}` : 'https://placehold.co/40x40/cccccc/333333?text=Org'} alt={penyelenggaraEvent || 'Organizer'} className="w-12 h-12 rounded-full object-cover mr-4" />
-                                    <div>
-                                        <p className="font-semibold text-gray-700">{penyelenggaraEvent || 'Organizer'}</p>
-                                        <p className="text-gray-500 text-sm">{organisasi?.namaOrganisasi || 'Informasi Organisasi'}</p>
+                            
+                            {/* --- KARTU PENYELENGGARA DIBUAT BISA DIKLIK --- */}
+                            {organization ? (
+                                <Link href={route('organization.show', organization.idOrganisasi)} className="block">
+                                    <div className="bg-white p-4 rounded-lg shadow hover:bg-gray-50 transition">
+                                        <div className="flex items-center">
+                                            <img 
+                                                src={organization.fotoOrganisasi ? `/storage/${organization.fotoOrganisasi}` : 'https://placehold.co/40x40/cccccc/333333?text=Org'} 
+                                                alt={organization.namaOrganisasi} 
+                                                className="w-12 h-12 rounded-full object-cover mr-4" 
+                                            />
+                                            <div>
+                                                <p className="font-semibold text-gray-700">Penyelenggara</p>
+                                                <p className="text-gray-500 text-sm">{organization.namaOrganisasi}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ) : (
+                                <div className="bg-white p-4 rounded-lg shadow">
+                                    <div className="flex items-center">
+                                        <img src='https://placehold.co/40x40/cccccc/333333?text=Org' alt='Logo Penyelenggara' className="w-12 h-12 rounded-full object-cover mr-4" />
+                                        <div>
+                                            <p className="font-semibold text-gray-700">Penyelenggara</p>
+                                            <p className="text-gray-500 text-sm">Informasi tidak tersedia</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
+
                             <div className="bg-white p-4 rounded-lg shadow">
                                 <div className="flex items-start mb-2">
                                     <LocationIcon />
@@ -133,12 +137,12 @@ export default function EventDetailPage({ eventDetail }) {
                         <div className="md:col-span-2 space-y-6">
                             <div className="bg-white p-4 rounded-lg shadow flex justify-between items-center">
                                 <p className="text-lg font-bold text-gray-800">GRATIS</p>
-                                <a href={linkRegistrasi || '#'} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 text-md">
+                                <a href={linkRegistrasi} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 text-md">
                                     Daftar Sekarang
                                 </a>
                             </div>
                             <div className="bg-white p-6 rounded-lg shadow">
-                                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{deskripsiEvent || 'Deskripsi tidak tersedia.'}</p>
+                                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{deskripsiEvent}</p>
                             </div>
                         </div>
                     </div>

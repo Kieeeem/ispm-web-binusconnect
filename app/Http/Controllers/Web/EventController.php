@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
+use App\Models\Organization;
 
 class EventController extends Controller
 {
@@ -32,7 +33,13 @@ class EventController extends Controller
      */
     public function create()
     {
-        return Inertia::render('AddEventPage');
+    
+    $organizations = Organization::all();
+
+    // Kirim data organisasi ke komponen React
+    return Inertia::render('AddEventPage', [
+        'organizations' => $organizations,
+    ]);
     }
 
     /**
@@ -72,9 +79,15 @@ class EventController extends Controller
      * Menampilkan halaman detail untuk satu event.
      */
     public function show(Event $event)
-    {
-        return Inertia::render('EventDetailPage', [
-            'eventDetail' => $event
-        ]);
-    }
+{
+    // Memuat data relasi 'organisasi' ke dalam objek $event
+    // yang sudah ditemukan secara otomatis oleh Laravel.
+    $event->load('organization');
+
+    // Langsung kirim objek $event yang sudah lengkap dengan data organisasinya.
+    return Inertia::render('EventDetailPage', [
+        'eventDetail' => $event
+    ]);
+}
+
 }

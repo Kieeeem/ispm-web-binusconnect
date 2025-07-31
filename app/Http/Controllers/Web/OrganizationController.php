@@ -41,8 +41,9 @@ class OrganizationController extends Controller
      */
     public function show(Organization $organization)
 {
-    // Nanti Anda bisa memuat relasi di sini, contoh:
-    // $organization->load('forums', 'events');
+    $organization->load(['events' => function ($query) {
+        $query->latest()->first();
+    }]);
 
     // Pastikan nama komponennya 'OrganizationDetailPage'
     return Inertia::render('OrganizationDetailPage', [

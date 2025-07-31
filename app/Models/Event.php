@@ -62,4 +62,10 @@ class Event extends Model
     {
         return $this->belongsTo(Organization::class, 'idOrganisasi', 'idOrganisasi');
     }
+
+    public function organisasi()
+{
+   
+    return $this->belongsTo(Organization::class, 'idOrganisasi');
+}
 }

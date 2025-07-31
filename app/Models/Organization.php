@@ -58,5 +58,12 @@ class Organization extends Model
         'passwordOrganisasi',
         'fotoOrganisasi',
         'bioOrganisasi',
+        'fotoBanner'
     ];
+
+    public function events()
+{
+    // Asumsi: tabel event memiliki foreign key 'idOrganisasi'
+    return $this->hasMany(Event::class, 'idOrganisasi');
+}
 }
