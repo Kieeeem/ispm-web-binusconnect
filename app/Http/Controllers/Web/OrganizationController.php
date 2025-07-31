@@ -14,25 +14,39 @@ class OrganizationController extends Controller
      */
     public function index()
 {
-    $organizations = Organization::all();
+    // 1. Ambil semua data organisasi
+         // 1. Ambil semua data organisasi (ini tidak berubah)
+        $organizations = Organization::latest()->get();
 
+        // 2. Definisikan SEMUA tipe organisasi yang mungkin ada secara manual
+        $categories = [
+            'Himpunan Mahasiswa Jurusan',
+            'Penalaran',
+            'Kerohanian dan Kemasyarakatan',
+            'Olahraga dan Beladiri',
+            // Anda bisa tambahkan tipe lain di sini jika ada
+        ];
 
-    // Baris ini mengirimkan data tersebut ke komponen React 'OrganizationPage'
-    return Inertia::render('OrganizationPage', [
-        'organizations' => $organizations
-    ]);
+        // 3. Kirim data organisasi dan daftar kategori statis ke frontend
+        return Inertia::render('OrganizationPage', [
+            'organizations' => $organizations,
+            'categories' => $categories,
+        ]);
+
+        
 }
 
     /**
      * Menampilkan halaman detail untuk satu organisasi.
      */
     public function show(Organization $organization)
-    {
-        // Nanti, kita bisa memuat data forum & event terkait di sini
-        // $organization->load('forums', 'events'); 
+{
+    // Nanti Anda bisa memuat relasi di sini, contoh:
+    // $organization->load('forums', 'events');
 
-        return Inertia::render('OrganizationDetailPage', [
-            'orgDetail' => $organization
-        ]);
-    }
+    // Pastikan nama komponennya 'OrganizationDetailPage'
+    return Inertia::render('OrganizationDetailPage', [
+        'organization' => $organization
+    ]);
+}
 }
